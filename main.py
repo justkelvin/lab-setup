@@ -12,27 +12,40 @@ import sys
 from shutil import which
 import argparse
 import time
+from banner import banner
+
+try:
+	from colorama import Fore, Style
+except ModuleNotFoundError:
+	print(banner())
+	print("Install required modules. Check README.md for instructions\n")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-u', '--update', help='Updates the system to latest release.')
 parser.add_argument('-i', '--install', help='Install docker image of nahamsec lab')
 parser.add_argument('-j', '--juice', help='Install juiceshop web lab')
-
-
 args = parser.parse_args()
 updates = args.update
+
+
+def clear():
+	"""Clean terminal screen"""
+	os.system('clear')
 
 def python_check():
 	"""Check for python version"""
 	if sys.version_info.major < (3):
-		sys.stderr.write("Your need a higher python version to use the script!!\n")
+		print(Fore.RED + "Your need a higher python version to use the script!!\n")
+		clear()
 		sys.exit(1)
 
 def update():
 	"""Debian apt update"""
-	sys.stdout.write("Performing repo update. Confirm with password when asked.")
-	time.sleep(3)
-	os.system('sudo apt update')
+	clear()
+	print(Fore.LIGHTMAGENTA_EX + banner() + Fore.RESET)
+	print(Fore.GREEN + "Performing repo update. Confirm with password when asked." + Fore.RESET)
+	time.sleep(2)
+	os.system('sudo apt update -y')
 	return 0
 
 def package_check():
@@ -43,29 +56,37 @@ def package_check():
 		
 		if installed == None:
 			not_installed.append(i)
-	print(not_installed)
-	sys.stdout.write("This programs have not been detected in your system!!\n")
+	print(Fore.RED + "This programs have not been detected in your system!!\n" + Fore.RESET)
+	print(Fore.CYAN + f"{not_installed}")
 
 	return not_installed
 
 def configure_all(packages):
 	try:
 		for package in packages:
-			sys.stdout.write("Installing " + package + "\n")
-			os.system('sudo apt install ' + package)
+			clear()
+			print(Fore.CYAN + "Installing " + package + "\n" + Fore.RESET)
+			os.system('sudo apt install ' + package + ' -y')
 	except SystemExit:
-		sys.stderr.write("Failed, try again")
+		print(Fore.RED + "Failure, try again" + Fore.RESET)
 		sys.exit(1)
 
 def get_juice():
-	sys.stdout.write("Getting tar ball from github latest releases\n")
+	clear()
+	print(Fore.GREEN + "Getting tar ball from github latest releases\n" + Fore.RESET)
 	sys.stdout.write("Total Size: 140MB...")
 	os.system("wget https://github.com/juice-shop/juice-shop/releases/download/v14.3.0/juice-shop-14.3.0_node18_linux_x64.tgz")
-	sys.stdout.write("Done.")
+	clear()
+	print(Fore.CYAN + "[+] Download success.")
+	time.sleep(2)
+	print(Fore.GREEN + "[-] Preparing to extract archive...")
+	os.system('tar -xvf juice-shop-14.3.0_node18_linux_x64.tgz')
+	print(Fore.GREEN + "[+] Done")
 
 def get_lab2():
+	clear()
 	os.system('git clone http://github.com/nahamsec/nahamsec.training')
-	os.system('clear')
+	clear()
 	os.system('cd nahamsec && sudo docker build -t nahamsec .')
 
 def main():
