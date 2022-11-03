@@ -15,6 +15,7 @@ import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-u', '--update', help='Updates the system to latest release.')
+parser.add_argument('-i', '--install', help='Install docker image of nahamsec lab')
 
 
 args = parser.parse_args()
@@ -30,11 +31,11 @@ def update():
 	"""Debian apt update"""
 	sys.stdout.write("Performing repo update. Confirm with password when asked.")
 	time.sleep(3)
-	os.system('sudo apt update')
-	sys.exit(0)
+	# os.system('sudo apt update')
+	return 0
 
 def package_check():
-	program = ['node', 'git', 'docker', 'virtualbox']
+	program = ['node', 'git', 'docker.io', 'virtualbox', 'docker', 'npm']
 	not_installed = []
 	for i in program:
 		installed = which(i)
@@ -42,13 +43,41 @@ def package_check():
 		if installed == None:
 			not_installed.append(i)
 	print(not_installed)
-	sys.stdout.write("This programs have not been detected in your system!! Installing\n")
-			# print(f"Installing {i}")
-			# os.system('sudo apt install {i}')
+	sys.stdout.write("This programs have not been detected in your system!!\n")
+
+	return not_installed
+
+def configure_all(packages):
+	try:
+		for package in packages:
+			sys.stdout.write("Installing " + package + "\n")
+			os.system('sudo apt install ' + package)
+	except SystemExit:
+		sys.stderr.write("Failed, try again")
+		sys.exit(1)
+
+def get_juice():
+	os.system("wget ")
+
+def get_lab2():
+	os.system('git clone http://github.com/nahamsec/nahamsec.training')
+	os.system('clear')
+	os.system('cd nahamsec && sudo docker build -t nahamsec .')
+
+
+def main():
+	
+	if args.install:
+		package_check()
+		get_lab2()
+	elif args.update:
+		update()
+	else:
+		configure_all(package_check())
+		python_check()
+		update()
+
 
 
 if __name__ == '__main__':
-	python_check()
-	# update()
-	package_check()
-
+	main()
