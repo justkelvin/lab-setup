@@ -17,6 +17,8 @@ Run the following commands **line by line** in the Terminal
 ```bash
 sudo apt install git python3
 
+pip3 install colorama
+
 git clone https://github.com/justkelvin/lab-setup
 
 cd lab-setup
@@ -25,6 +27,7 @@ cd lab-setup
 ### **Step 2: Running the script**
 
 ```bash
+python3 main.py
 
 ```
 

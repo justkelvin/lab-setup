@@ -87,7 +87,7 @@ def get_lab2():
 	clear()
 	os.system('git clone http://github.com/nahamsec/nahamsec.training')
 	clear()
-	os.system('cd nahamsec && sudo docker build -t nahamsec .')
+	os.system('cd nahamsec.training && sudo docker build -t nahamsec .')
 
 def main():
 	
