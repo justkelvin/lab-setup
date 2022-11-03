@@ -16,6 +16,7 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument('-u', '--update', help='Updates the system to latest release.')
 parser.add_argument('-i', '--install', help='Install docker image of nahamsec lab')
+parser.add_argument('-j', '--juice', help='Install juiceshop web lab')
 
 
 args = parser.parse_args()
@@ -31,7 +32,7 @@ def update():
 	"""Debian apt update"""
 	sys.stdout.write("Performing repo update. Confirm with password when asked.")
 	time.sleep(3)
-	# os.system('sudo apt update')
+	os.system('sudo apt update')
 	return 0
 
 def package_check():
@@ -57,13 +58,15 @@ def configure_all(packages):
 		sys.exit(1)
 
 def get_juice():
-	os.system("wget ")
+	sys.stdout.write("Getting tar ball from github latest releases\n")
+	sys.stdout.write("Total Size: 140MB...")
+	os.system("wget https://github.com/juice-shop/juice-shop/releases/download/v14.3.0/juice-shop-14.3.0_node18_linux_x64.tgz")
+	sys.stdout.write("Done.")
 
 def get_lab2():
 	os.system('git clone http://github.com/nahamsec/nahamsec.training')
 	os.system('clear')
 	os.system('cd nahamsec && sudo docker build -t nahamsec .')
-
 
 def main():
 	
@@ -72,12 +75,14 @@ def main():
 		get_lab2()
 	elif args.update:
 		update()
+	elif args.juice:
+		get_juice()
 	else:
-		configure_all(package_check())
 		python_check()
+		configure_all(package_check())
 		update()
-
-
+		get_juice()
+		get_lab2()
 
 if __name__ == '__main__':
 	main()
